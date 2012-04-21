@@ -1,0 +1,126 @@
+#N canvas 382 46 640 783 10;
+#X declare -path abstractions;
+#N canvas 705 173 500 341 input-monitor 0;
+#X obj 130 199 *~;
+#X obj 333 122 dbtorms;
+#X obj 333 143 pack f 40;
+#X obj 333 164 line~;
+#X obj 333 54 moses 41;
+#X obj 333 76 t b;
+#X msg 333 98 0;
+#X obj 130 14 inlet~;
+#X obj 158 55 sssad/sssad 1-input_monitor;
+#X obj 130 222 throw~ \$1-master-sum;
+#X obj 158 84 s \$1-input-monitor-set;
+#X obj 317 11 r \$1-input-monitor;
+#X connect 0 0 9 0;
+#X connect 1 0 2 0;
+#X connect 2 0 3 0;
+#X connect 3 0 0 1;
+#X connect 4 0 5 0;
+#X connect 4 1 1 0;
+#X connect 5 0 6 0;
+#X connect 6 0 1 0;
+#X connect 7 0 0 0;
+#X connect 8 0 10 0;
+#X connect 11 0 4 0;
+#X connect 11 0 8 1;
+#X restore -31 113 pd input-monitor;
+#X obj 100 100 cnv 15 200 500 empty empty Channel_\$1 20 12 0 14 -233017
+-66577 0;
+#X obj 124 456 hsl 128 30 40 100 0 0 \$1-input-monitor \$1-input-monitor-set
+dry-input-level 8 8 0 12 -204800 -1 -1 0 1;
+#X obj 124 530 hsl 128 30 40 100 0 0 \$1-master-volume \$1-master-volume-set
+master-volume 8 8 0 12 -262130 -1 -1 12700 1;
+#X obj 124 493 hsl 128 30 40 100 0 0 \$1-concat-level \$1-concat-level-set
+granular-level 8 8 0 12 -204786 -1 -1 12700 1;
+#X obj 118 160 bng 15 250 50 0 empty empty Load-default-sound 17 7
+0 12 -262144 -1 -1;
+#X obj 118 175 bng 15 250 50 0 empty empty Load-other-sound 17 7 0
+12 -262144 -1 -1;
+#X obj 118 215 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj 119 280 tgl 15 0 \$1-analyze empty Analyze-input 17 7 0 12 -262144
+-1 -1 1 1;
+#X obj 119 260 tgl 15 0 \$1-normalize empty Normalize 17 7 0 12 -262144
+-1 -1 1 1;
+#X obj 119 302 tgl 15 0 \$1-env_pitch_shift \$1-env_pitch_shift-set
+Env_Pitch_Shift 17 7 0 10 -262144 -1 -1 1 1;
+#N canvas 749 205 896 631 init 0;
+#X obj 32 21 loadbang;
+#X obj 78 74 s lb1;
+#X obj 32 42 t b b b;
+#X obj 55 96 s lb2;
+#X obj 32 120 s lb3;
+#X obj 535 184 r lb1;
+#X obj 350 184 r lb2;
+#X floatatom 555 242 5 0 0 0 - - -;
+#X floatatom 370 242 5 0 0 0 - - -;
+#X floatatom 535 332 5 0 0 0 - - -;
+#X floatatom 350 332 5 0 0 0 - - -;
+#X obj 370 268 s synth-window-size;
+#X obj 555 268 s synth-overlap;
+#X obj 350 358 s analysis-window-size;
+#X obj 535 358 s analysis-overlap;
+#X obj 143 24 r lb3;
+#X obj 12 434 declare -path abstractions;
+#X text 343 40 Set overlap and window-size (in that order) in the number
+boxes below;
+#X text 343 80 If you're not sure about these settings \, read info
+in the [pd timbreGrains] sub-patch first.;
+#X msg 535 305 1;
+#X msg 350 305 1024;
+#X msg 370 215 1024;
+#X msg 555 215 1;
+#X obj 89 5 r reset;
+#X obj 143 54 f \$1;
+#X msg 143 80 \; pd dsp 1 \; \$1-concat-level-set 90 \; \$1-master-volume-set
+80 \; \$1-max_matches-set 0 \; \$1-jump_prob-set 0 \; \$1-reorient-set
+0 \; \$1-search_center-set 1250 \; \$1-neighborhood-set 2454 \; \$1-stutter_protect-set
+1 \; \$1-grain-size-low-set 100 \; \$1-grain-size-hi-set 100 \; \$1-transpose_base-set
+0 \; \$1-gain-bpf-in-set 0.825 \; \$1-F0-bpf-in-set 2742.54 \; \$1-Q-bpf-in-set
+1.464 \; \$1-compressRange_in-set 186.6 \; \$1-compressRange_out-set
+137.4 \;;
+#X connect 0 0 2 0;
+#X connect 2 0 4 0;
+#X connect 2 1 3 0;
+#X connect 2 2 1 0;
+#X connect 5 0 19 0;
+#X connect 5 0 22 0;
+#X connect 6 0 21 0;
+#X connect 6 0 20 0;
+#X connect 7 0 12 0;
+#X connect 8 0 11 0;
+#X connect 9 0 14 0;
+#X connect 10 0 13 0;
+#X connect 15 0 24 0;
+#X connect 19 0 9 0;
+#X connect 20 0 10 0;
+#X connect 21 0 8 0;
+#X connect 22 0 7 0;
+#X connect 23 0 2 0;
+#X connect 24 0 25 0;
+#X restore 386 56 pd init;
+#X obj -31 15 inlet~;
+#X obj -31 60 smash-input \$1;
+#X obj 387 81 granular-out \$1;
+#X obj 118 190 load-source-sound \$1;
+#X obj 118 230 analyze-source-sound \$1;
+#X obj 118 360 analysis-controls \$1;
+#X obj 386 200 s pd-analysis-controls.pd;
+#X obj 386 153 r \$1-analysis-visible;
+#X obj 119 342 bng 15 250 50 0 \$1-analysis-visible empty Analysis-controls
+17 7 0 10 -262144 -1 -1;
+#X msg 386 178 vis 1;
+#X obj 121 386 tgl 15 0 \$1-trainGest \$1-trainGest-set Train 17 7
+0 10 -262144 -1 -1 0 1;
+#X obj 121 405 tgl 15 0 \$1-idGest \$1-idGest-set ID 17 7 0 10 -262144
+-1 -1 0 1;
+#X connect 5 0 15 0;
+#X connect 6 0 15 1;
+#X connect 7 0 16 0;
+#X connect 12 0 13 0;
+#X connect 13 0 0 0;
+#X connect 19 0 21 0;
+#X connect 21 0 18 0;
+#X coords 0 -1 1 1 200 500 1 100 100;

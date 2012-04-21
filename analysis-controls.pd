@@ -1,0 +1,176 @@
+#N canvas 2 22 916 748 10;
+#N canvas 327 287 949 494 MORE_INFO 0;
+#X text 17 8 When timbreID receives a new feature to compare against
+its database of previously stored instances \, it searches the entire
+database. The messages in this panel let you restrict that search.
+;
+#X text 17 360 You could also restrict the search in order to steer
+the synthesis toward a certain type of sound. If you know that the
+beginning of your source sound file has piano sounds \, and the end
+has violin sounds \, you might want to move search_center toward the
+latter half of the database to get violin-ish sounds. Or \, you might
+put it right in the middle to increase your chances of getting a hybrid
+of both.;
+#X text 17 310 You might restrict the search in this way in order to
+reduce CPU load. With thousands of instances \, repeated real time
+searches can be taxing.;
+#X text 17 70 "neighborhood" lets you specify the number of instances
+to search \, and the value of "search_center" is the center of that
+neighborhood. A simple example: with a database of only 11 instances
+\, neighborhood=7 \, and search_center=4 \, timbreID would only search
+instances 1 through 7 when trying to find a best match (4-3 on the
+low end and 4+3 on the high end).;
+#X text 492 129 Better still \, "reorient" automatically shifts the
+search_center based on the most recent match. Continuing with the simple
+example from above \, if reorient is active and instance 6 is found
+to be the best match \, search_center is automatically set to 6 \,
+and (because the neighborhood is still 7) the new search area is 3
+through 9.. So \, if your input signal suddenly changes character \,
+the system should gradually nudge it's way to the region in the source
+sound file that best suits the input. This assumes that the source
+file is not completely randomly assembled \, i.e. \, if the last part
+has violin sounds \, it should last for seconds rather than milliseconds.
+;
+#X text 492 302 Last \, "max_matches" potentially has an impact on
+how continuous the output sounds. If max_matches = 5 \, timbreID will
+find the top 5 matches \, and check to see how they compare with the
+grain from the previous match. If one of these 5 is a better match
+to the previous grain than the current input grain \, the previous
+grain is prioritized when it comes time to report the best match. Increasing
+max_matches will increase CPU load \, and if it gets too high the output
+will bear less of a resemblance to the input.;
+#X text 492 21 "jump_prob" lets you specify a probability value between
+0 and 1 determining the chance of reassigning search_center to a random
+location in the database. Neighbhorhood is unaffected. You could use
+this so that the sound doesn't get stuck using a particular range of
+source grains. There is also a "stutter_protect" option that does not
+allow the same match to be output twice in a row.;
+#X text 17 170 Note: if the combination of search_center and neighborhood
+reach past the boundaries of the database \, it wraps around to the
+beginning. So if you want to eliminate the possibility of choosing
+grains from the beginning of your source sound file \, make sure your
+neighborhood doesn't reach past the number of instances in your database.
+When you load your file \, feedback in Pd's post window will let you
+know how many instances have been loaded. You can also use timbreID's
+"print" method to post that information to the post window.;
+#X restore 24 -75 pd MORE_INFO;
+#N canvas 579 352 762 454 messaging 0;
+#X msg 528 291 stutter_protect \$1;
+#X msg 174 220 neighborhood \$1;
+#X obj 174 192 i;
+#X msg 53 161 search_center \$1;
+#X obj 53 133 i;
+#X msg 480 218 reorient \$1;
+#X msg 414 149 jump_prob \$1;
+#X msg 261 309 max_matches \$1;
+#X obj 261 281 + 1;
+#X text 51 25 Here we just get the data from the sliders in the main
+analysis control panel and send it to the appropriate messages for
+timbreID.;
+#X obj 414 349 s \$1-tID;
+#X obj 53 365 s \$1-tID;
+#X obj 53 111 r \$1-search_center;
+#X obj 174 170 r \$1-neighborhood;
+#X obj 261 259 r \$1-max_matches;
+#X obj 414 129 r \$1-jump_prob;
+#X obj 480 198 r \$1-reorient;
+#X obj 528 271 r \$1-stutter_protect;
+#X connect 0 0 10 0;
+#X connect 1 0 11 0;
+#X connect 2 0 1 0;
+#X connect 3 0 11 0;
+#X connect 4 0 3 0;
+#X connect 5 0 10 0;
+#X connect 6 0 10 0;
+#X connect 7 0 11 0;
+#X connect 8 0 7 0;
+#X connect 12 0 4 0;
+#X connect 13 0 2 0;
+#X connect 14 0 8 0;
+#X connect 15 0 6 0;
+#X connect 16 0 5 0;
+#X connect 17 0 0 0;
+#X restore 106 -75 pd messaging;
+#X obj 22 74 hradio 15 1 0 8 \$1-max_matches \$1-max_matches-set max-matches
+0 -8 0 12 -262144 -1 -1 0;
+#X obj 26 171 hsl 256 15 0 2453 0 0 \$1-search_center \$1-search_center-set
+search-center -2 -8 0 12 -262144 -1 -1 12994 1;
+#X obj 22 4 tgl 15 0 \$1-reorient \$1-reorient-set reorient 17 7 0
+12 -262144 -1 -1 0 1;
+#X obj 22 24 tgl 15 0 \$1-stutter_protect \$1-stutter_protect-set stutter-protect
+17 7 0 12 -262144 -1 -1 1 1;
+#X obj 26 211 hsl 256 15 0 2453 0 0 \$1-neighborhood \$1-neighborhood-set
+neighborhood -2 -8 0 12 -262144 -1 -1 25500 1;
+#X obj 25 114 hsl 256 15 0 1 0 0 \$1-jump_prob \$1-jump_prob-set jump-prob
+-2 -8 0 12 -262144 -1 -1 0 1;
+#X floatatom 294 171 10 0 0 0 - #1-search_center -;
+#X floatatom 294 211 10 0 0 0 - #1-neighborhood -;
+#X obj 25 267 hsl 256 15 25 300 0 0 \$1-grain-size-low \$1-grain-size-low-set
+grain-size-low -2 -8 0 12 -262144 -1 -1 6955 1;
+#X floatatom 293 267 10 0 0 1 percent #1-grain-size-low -;
+#X obj 25 307 hsl 256 15 25 300 0 0 \$1-grain-size-hi \$1-grain-size-hi-set
+grain-size-hi -2 -8 0 12 -262144 -1 -1 6955 1;
+#X floatatom 293 307 10 0 0 1 percent #1-grain-size-hi -;
+#X text 20 338 Use these controls to set lower & upper bounds on random
+grain size for each match. This will help break up any flutter you
+might hear from the grain enveloping that happens at a steady rate.
+;
+#X obj 445 352 hsl 300 15 0 300 0 0 \$1-compressRange_out \$1-compressRange_out-set
+The_compressor_parameter_for_granular_output -2 -8 0 10 -262144 -1
+-1 22894 1;
+#X floatatom 442 376 5 0 0 0 - - -;
+#X obj 444 289 hsl 300 15 0 300 0 0 \$1-compressRange_in \$1-compressRange_in-set
+The_compressor_parameter_for_input_of_the_contact_mic -2 -8 0 10 -262144
+-1 -1 22798 1;
+#X floatatom 441 308 5 0 0 0 - - -;
+#X obj 445 230 hsl 300 15 0.002 20 0 0 \$1-Q_BPF_in \$1-Q-bpf-in-set
+The_Q_for_BFP_on_input_of_the_contact_mic -2 -8 0 10 -262144 -1 -1
+2186 1;
+#X floatatom 442 251 5 0 0 0 - - -;
+#X obj 446 104 hsl 300 15 -1 50 0 0 \$1-gain_BPF_in \$1-gain-bpf-in-set
+The_gain_for_BPF_on_input_of_the_contact_mic -2 -8 0 10 -262144 -1
+-1 1070 1;
+#X floatatom 443 126 5 0 0 0 - - -;
+#X obj 445 167 hsl 300 15 20 20000 1 0 \$1-F0_BPF_in \$1-F0-bpf-in-set
+The_F0_for_BPF_on_input_of_the_contact_mic -2 -8 0 10 -262144 -1 -1
+21300 1;
+#X floatatom 442 191 8 0 0 0 - - -;
+#X obj 430 -81 cnv 15 350 150 empty empty Noise_Thresh 20 12 0 14 -228856
+-66577 0;
+#X obj 450 -44 hsl 300 15 0 0.02 0 1 \$1-noise_thresh \$1-noise-thresh-set
+Noise_reduction_thresh -2 -8 0 10 -262144 -1 -1 0 1;
+#X floatatom 447 -20 5 0 0 0 - - -;
+#X obj 450 24 hsl 300 15 0 1 0 1 \$1-noise_gain \$1-noise-gain-set
+noise_gain -2 -8 0 10 -262144 -1 -1 0 1;
+#X floatatom 447 44 5 0 0 0 - - -;
+#X obj 48 431 cnv 15 700 200 empty empty Pitch_Shifting 20 12 0 14
+-233017 -66577 0;
+#X obj 76 481 hsl 300 15 -400 400 0 0 \$1-transpose_base \$1-transpose_base-set
+Transpose_base -2 -8 0 10 -262144 -1 -1 4600 1;
+#X floatatom 73 506 5 0 0 0 - - -;
+#X obj 77 538 hsl 300 15 -100 100 0 0 \$1-transpose \$1-transpose-set
+The_pitch_shift_value_for_the_input_of_the_contact_mic -2 -8 0 10 -262144
+-1 -1 6200 1;
+#X floatatom 74 563 5 0 0 0 - - -;
+#X obj 416 468 hsl 300 15 -8 8 0 0 \$1-pitchRange \$1-pitchRange-set
+Pitch_Range -2 -8 0 10 -262144 -1 -1 0 1;
+#X floatatom 413 488 5 0 0 0 - - -;
+#X obj 414 525 hsl 300 15 0 50 0 0 \$1-basePitch1 \$1-basePitch1-set
+Base_Pitch_Gesture_1 -2 -8 0 10 -262144 -1 -1 0 1;
+#X floatatom 411 546 5 0 0 0 - - -;
+#X obj 413 584 hsl 300 15 0 200 0 0 \$1-basePitch2 \$1-basePitch2-set
+Base_Pitch_Gesture_2 -2 -8 0 10 -262144 -1 -1 0 1;
+#X floatatom 410 606 5 0 0 0 - - -;
+#X connect 15 0 16 0;
+#X connect 17 0 18 0;
+#X connect 19 0 20 0;
+#X connect 21 0 22 0;
+#X connect 23 0 24 0;
+#X connect 26 0 27 0;
+#X connect 28 0 29 0;
+#X connect 31 0 32 0;
+#X connect 33 0 34 0;
+#X connect 35 0 36 0;
+#X connect 37 0 38 0;
+#X connect 39 0 40 0;
+#X coords 0 748 1 747 85 16 0;
