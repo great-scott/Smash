@@ -9,6 +9,7 @@ Dependencies
 ------------
 - Pure Data Extended (http://puredata.info/downloads/pd-extended)
 - Timbre ID External Objects (http://williambrent.conflations.com/pages/research.html)
+- FFTease (http://www.somasa.qub.ac.uk/~elyon/LyonSoftware/MaxMSP/FFTease/)
 
 Issues
 ------
